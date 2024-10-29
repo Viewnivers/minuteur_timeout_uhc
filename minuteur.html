@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minuteur avec ajout de temps</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #timer {
+            font-size: 2rem;
+            margin: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minuteur</h1>
+    
+    <label for="minutes">Minutes :</label>
+    <input type="number" id="minutes" min="0" placeholder="0">
+    
+    <label for="seconds">Secondes :</label>
+    <input type="number" id="seconds" min="0" max="59" placeholder="0">
+    
+    <button onclick="startTimer()">Démarrer</button>
+    <button onclick="resetTimer()">Réinitialiser</button>
+    
+    <div id="timer">00:00</div>
+    
+    <div class="button-container">
+        <button onclick="addTime(2)">+2 sec (Briquet, Cisailles, etc.)</button>
+        <button onclick="addTime(5)">+5 sec (Tous les outils en or et en fer)</button>
+        <button onclick="addTime(10)">+10 sec (Lit, Tableau, etc.)</button>
+        <button onclick="addTime(20)">+20 sec (Armures en cuir & pelle en diamant)</button>
+        <button onclick="addTime(30)">+30 sec (Alambic, Armures en or et en fer)</button>
+        <button onclick="addTime(40)">+40 sec (Houe & épée en diamant)</button>
+        <button onclick="addTime(60)">+1 min (Feu d'artifice, Pioche & hache en diamant)</button>
+        <button onclick="addTime(80)">+1 min 20 sec (Toutes les armures en diamant)</button>
+        <button onclick="addTime(100)">+1 min 40 sec (Enclume, Pomme en or, etc.)</button>
+        <button onclick="addTime(150)">+2 min 30 sec (TNT)</button>
+        <button onclick="addTime(200)">+3 min 20 sec (Piston collant, etc.)</button>
+        <button onclick="addTime(300)">+5 min (Table d'enchantement)</button>
+        
+        <input type="number" id="customAddMinutes" placeholder="Ajouter (min)" min="0">
+        <button onclick="addCustomMinutes()">Ajouter Minutes</button>
+
+        <input type="number" id="customAddSeconds" placeholder="Ajouter (sec)" min="0">
+        <button onclick="addCustomSeconds()">Ajouter Secondes</button>
+    </div>
+
+    <script>
+        let countdown;
+        let timeRemaining = 0;
+        const timerDisplay = document.getElementById("timer");
+
+        function startTimer() {
+            clearInterval(countdown);
+            
+            const minutes = parseInt(document.getElementById("minutes").value) || 0;
+            const seconds = parseInt(document.getElementById("seconds").value) || 0;
+            timeRemaining = minutes * 60 + seconds;
+
+            displayTime(timeRemaining);
+            
+            countdown = setInterval(() => {
+                timeRemaining--;
+                displayTime(timeRemaining);
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(countdown);
+                    alert("Le temps est écoulé !");
+                }
+            }, 1000);
+        }
+
+        function displayTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            timerDisplay.textContent = "00:00";
+            timeRemaining = 0;
+            document.getElementById("minutes").value = "";
+            document.getElementById("seconds").value = "";
+            document.getElementById("customAddMinutes").value = "";
+            document.getElementById("customAddSeconds").value = "";
+        }
+
+        function addTime(secondsToAdd) {
+            timeRemaining += secondsToAdd;
+            displayTime(timeRemaining);
+        }
+
+        function addCustomMinutes() {
+            const customMinutes = parseInt(document.getElementById("customAddMinutes").value);
+            if (!isNaN(customMinutes) && customMinutes > 0) {
+                addTime(customMinutes * 60);
+            } else {
+                alert("Veuillez entrer un nombre de minutes valide.");
+            }
+        }
+
+        function addCustomSeconds() {
+            const customSeconds = parseInt(document.getElementById("customAddSeconds").value);
+            if (!isNaN(customSeconds) && customSeconds > 0) {
+                addTime(customSeconds);
+            } else {
+                alert("Veuillez entrer un nombre de secondes valide.");
+            }
+        }
+    </script>
+</body>
+</html>
